@@ -202,11 +202,12 @@ while running:
 						first_scr=True
 						second_scr=False
 					elif mx>368 and mx<432: #Replay button
-						game_status=True
 						game_update()
 						t_start=0
 						t_stop=0
+						senten=count=correct=0
 						display_score=False
+						game_status=True
 					elif mx>634 and mx<698: #Exit
 						running=False
 			elif event.type==pygame.KEYDOWN:
