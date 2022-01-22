@@ -62,7 +62,7 @@ wpm=0
 scores={"Muskmelon":23}
 def display_sql():
     cursor = mycon.cursor()
-    cursor.execute("select name from scores")
+    cursor.execute("select * from scores")
     data = cursor.fetchall()
     #Assuming data is in the form  [(name1,score1),(name2,score2),....]
     for row in data:
