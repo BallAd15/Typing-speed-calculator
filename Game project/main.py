@@ -2,6 +2,13 @@ import pygame
 from pygame import mixer
 import random
 from time import perf_counter
+import mysql.connector as sqltor
+
+mycon = sqltor.connect(host = "localhost", user = "root", passwd = "password", database = "test", charset = "utf8")
+if mycon.is_connected() == False:
+    print("Error connecting to MySQL database")
+else:
+    print("Connection successful")
 
 #Initializing pygame
 WIDTH=800
@@ -52,11 +59,38 @@ wpm=0
 
 # Fetching and Updating leaderboard ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-scores={"Muskmelon":23, "Pirates":96,"Alvarez":87,"Frisbee":13}
+scores={"Muskmelon":23}
+def display_sql():
+    cursor = mycon.cursor()
+    cursor.execute("select name from scores")
+    data = cursor.fetchall()
+    #Assuming data is in the form  [(name1,score1),(name2,score2),....]
+    for row in data:
+    	scores[row[0]]=row[1]
+display(sql)
 
 def update(name,wpm):
 	global scores
 	scores[name]=wpm
+
+	cursor = mycon.cursor()
+	statement_enter = "INSERT INTO scores(name,speed) VALUES('{}','{}')".format(name,wpm)
+	statement_update = "UPDATE scores set speed = '{}' WHERE name = '{}'".format(wpm,name)
+	flag = -1
+	cursor.execute("select name from scores")
+	data = cursor.fetchall()
+	for i in data:
+	  print(i)
+	for i in data:
+	  if name == i[0]:
+	      flag = data.index((name,))
+
+	if flag>=0:
+	  cursor.execute(statement_update)
+	  mycon.commit()
+	else:
+	  cursor.execute(statement_enter)
+	  mycon.commit()
 
 # Background Music ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 mixer.music.load('undertale-ruins.mp3')
@@ -90,7 +124,7 @@ def title():
 	input_surface=font.render(username,True,(54, 163, 209))#Font colour
 	screen.blit(input_surface,(input_box.x+20,input_box.y+1))
 	input_box.w= max(input_surface.get_width()+100,100)
-
+ 
 	x_location = 232
 	y_location = 273
 
@@ -203,9 +237,9 @@ while running:
 						second_scr=False
 					elif mx>368 and mx<432: #Replay button
 						game_update()
+						senten=count=correct=0
 						t_start=0
 						t_stop=0
-						senten=count=correct=0
 						display_score=False
 						game_status=True
 					elif mx>634 and mx<698: #Exit
@@ -219,7 +253,7 @@ while running:
 					if t_stop==0:
 						t_stop=perf_counter()
 					time_t=int(t_stop-t_start)
-					wpm=int(((correct/4)/time_t)*60)
+					wpm=int(((correct/5)/time_t)*60)
 					update(username,wpm)
 					print(correct,time_t,wpm)
 					senten=count=correct=0
@@ -242,7 +276,3 @@ while running:
 					count+=1
 	# 2) Update
 	pygame.display.update()
-
-
-
-
