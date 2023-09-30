@@ -1,7 +1,7 @@
 # Typing-speed-calculator
 An application that can calculate your typing speed. Created using Pygame.
 
-Has multiple features scuh as leaderboard (implemented using MySQL database), And soothing background music
+Has multiple features such as leaderboard (implemented using MySQL database), And soothing background music
 
 ## Homepage
 ![homepage](https://github.com/BallAd15/Typing-speed-calculator/assets/61866962/13399bd2-020f-4d63-b45a-a55c0ae87104)
